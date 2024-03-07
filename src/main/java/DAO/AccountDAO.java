@@ -40,13 +40,13 @@ public class AccountDAO {
             e.printStackTrace();
         }
         return null;
-
-
     }
 
-    public void loginUser(String username, String password)
+    public Account loginUser(Account account)
     {
-
+        
+        return getAccountByUsername(account.getUsername());
+        
     }
 
     public Account getAccountByUsername(String username)

@@ -72,6 +72,7 @@ public class SocialMediaController {
     private void registerHandler(Context context) throws JsonProcessingException {
           ObjectMapper mapper = new ObjectMapper();
           Account account = mapper.readValue(context.body(), Account.class);
+          
           Account addedAccount = accountService.registerAccount(account);
           if(addedAccount == null)
           {
@@ -101,8 +102,23 @@ public class SocialMediaController {
      * If the login is not successful, the response status should be 401. (Unauthorized)
      */
 
-    private void loginHandler(Context context) {
+    private void loginHandler(Context context) throws JsonProcessingException {
+          ObjectMapper mapper = new ObjectMapper();
+          Account account = mapper.readValue(context.body(), Account.class);
+          Account loginAccount = accountService.loginAccount(account);
 
+          if(loginAccount == null)
+          {
+               context.status(401);   
+          }
+          else if(!loginAccount.getPassword().equals(account.getPassword()))
+          {
+               context.status(401);
+          }
+          else
+          {
+               context.json(mapper.writeValueAsString(loginAccount));
+          }
     }
 
 

@@ -20,5 +20,10 @@ public class AccountService {
     {
         return accountDAO.registerUser(account);
     }
+
+    public Account loginAccount(Account account)
+    {
+        return accountDAO.loginUser(account);
+    }
     
 }
