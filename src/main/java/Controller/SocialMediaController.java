@@ -11,6 +11,7 @@ import Model.Account;
 import Model.Message;
 
 import Service.AccountService;
+import Service.MessageService;
 
 /**
  * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
@@ -19,10 +20,12 @@ import Service.AccountService;
  */
 public class SocialMediaController {
     AccountService accountService;
+    MessageService messageService;
 
     public SocialMediaController()
     {
           accountService = new AccountService();
+          messageService = new MessageService();
     }
      /**
      * In order for the test cases to work, you will need to write the endpoints in the startAPI() method, as the test
@@ -72,8 +75,8 @@ public class SocialMediaController {
     private void registerHandler(Context context) throws JsonProcessingException {
           ObjectMapper mapper = new ObjectMapper();
           Account account = mapper.readValue(context.body(), Account.class);
-          
           Account addedAccount = accountService.registerAccount(account);
+
           if(addedAccount == null)
           {
                context.status(400);
@@ -107,6 +110,7 @@ public class SocialMediaController {
           Account account = mapper.readValue(context.body(), Account.class);
           Account loginAccount = accountService.loginAccount(account);
 
+
           if(loginAccount == null)
           {
                context.status(401);   
@@ -128,8 +132,24 @@ public class SocialMediaController {
 - The creation of the message will be successful if and only if the message_text is not blank, is not over 255 characters, and posted_by refers to a real, existing user. If successful, the response body should contain a JSON of the message, including its message_id. The response status should be 200, which is the default. The new message should be persisted to the database.
 - If the creation of the message is not successful, the response status should be 400. (Client error)
      */
-    private void newMessageHandler(Context context) {
+    private void newMessageHandler(Context context) throws JsonProcessingException{
+          ObjectMapper mapper = new ObjectMapper();
+          Message message = mapper.readValue(context.body(), Message.class);
+          Message newMessage = messageService.createMessage(message);
 
+          if(message.getMessage_text() == "" || message.getMessage_text().length() > 255)
+          {
+               context.status(400);
+          }
+          else if(accountService.accountExists(message.getPosted_by()) == null)
+          {
+               context.status(400);
+          }
+          else
+          {
+               context.json(mapper.writeValueAsString(newMessage));
+          }
+          //else
     }
 
 

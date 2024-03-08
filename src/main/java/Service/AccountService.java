@@ -25,5 +25,10 @@ public class AccountService {
     {
         return accountDAO.loginUser(account);
     }
+
+    public Account accountExists(int accountID)
+    {
+        return accountDAO.getAccountByID(accountID);
+    }
     
 }
