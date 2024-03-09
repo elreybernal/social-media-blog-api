@@ -42,7 +42,7 @@ public class SocialMediaController {
         app.post("login", this::loginHandler);
         app.post("messages", this::newMessageHandler);
         app.get("messages", this::getAllMessageHandler);
-        app.get("messages/{messageId}", this::getMessageByMessageIDHandler);
+        app.get("messages/{message_id}", this::getMessageByMessageIDHandler);
         app.delete("messages/{message_id}", this::deleteMessageByMessageIDHandler);
         app.patch("messages/{message_id}", this::updateMessageByMessageIDHandler);
         app.get("accounts/{account_id}/messages", this::getAllMessageByUserIDHandler);
@@ -159,7 +159,7 @@ public class SocialMediaController {
 - The response body should contain a JSON representation of a list containing all messages retrieved from the database. It is expected for the list to simply be empty if there are no messages. The response status should always be 200, which is the default.
     */
     private void getAllMessageHandler(Context context) {
-
+          context.json(messageService.getAllMessages());
     }
 
 
@@ -169,7 +169,17 @@ public class SocialMediaController {
 - The response body should contain a JSON representation of the message identified by the message_id. It is expected for the response body to simply be empty if there is no such message. The response status should always be 200, which is the default.
      */
     private void getMessageByMessageIDHandler(Context context) {
-
+          int messageID = Integer.parseInt(context.pathParam("message_id"));
+          
+          Message message = messageService.getMessageByMessageID(messageID);
+          if(message == null)
+          {
+               context.status(200);
+          }
+          else
+          {
+               context.json(message);
+          }
     }
 
     /*
@@ -200,6 +210,7 @@ public class SocialMediaController {
 - The response body should contain a JSON representation of a list containing all messages posted by a particular user, which is retrieved from the database. It is expected for the list to simply be empty if there are no messages. The response status should always be 200, which is the default.
      */
     private void getAllMessageByUserIDHandler(Context context) {
-
+          int userID = Integer.parseInt(context.pathParam("account_id"));
+          context.json(messageService.getAllMessagesByUserID(userID));
     }
 }

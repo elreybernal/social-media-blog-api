@@ -43,6 +43,28 @@ public class MessageDAO {
         return null;
     }
 
+    public List<Message> getAllMessages(){
+        Connection connection = ConnectionUtil.getConnection();
+        List<Message> messages = new ArrayList<>();
+
+        try {
+            String sql = "SELECT * FROM message";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            while(rs.next())
+            {
+                Message message = new Message(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getLong(4));
+                messages.add(message);
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        return messages;
+    }
+
     public Message getMessageByMessageID(int messageID)
     {
         Connection connection = ConnectionUtil.getConnection();
@@ -64,5 +86,27 @@ public class MessageDAO {
     
         }
         return null;
+    }
+
+    public List<Message> getMessagesByUserID(int userID)
+    {
+        Connection connection = ConnectionUtil.getConnection();
+        List<Message> messages = new ArrayList<>();
+
+        try {
+            String sql = "SELECT * FROM message WHERE posted_by = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, userID);
+            ResultSet rs = preparedStatement.executeQuery();
+            while(rs.next())
+            {
+                Message message = new Message(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getLong(4));
+                messages.add(message);
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return messages;
     }
 }
