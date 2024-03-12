@@ -2,8 +2,6 @@ package Service;
 
 import Model.Message;
 
-import static org.mockito.ArgumentMatchers.refEq;
-
 import java.util.List;
 
 import DAO.MessageDAO;

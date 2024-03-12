@@ -7,8 +7,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 import Model.Account;
 
 public class AccountDAO {
@@ -21,8 +19,9 @@ public class AccountDAO {
         }
         Connection connection = ConnectionUtil.getConnection();
 
-        String sql = "INSERT INTO account (username, password) VALUES (?, ?)";
+        
         try {
+            String sql = "INSERT INTO account (username, password) VALUES (?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
             preparedStatement.setString(1, account.getUsername());
@@ -32,12 +31,7 @@ public class AccountDAO {
 
             Account registeredUser = getAccountByUsername(account.getUsername());
             return registeredUser;
-            //
-            /* if(pkeyResultSet.next())
-            {
-                int generated_account_id = (int) pkeyResultSet.getLong(1);
-                return new Account(generated_account_id, pkeyResultSet.getString("username"), pkeyResultSet.getString("password"));
-            } */
+            
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -58,7 +52,6 @@ public class AccountDAO {
 
         try {
             String sql = "SELECT * FROM account WHERE username = ?";
-
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
 
             preparedStatement.setString(1, username);
@@ -81,7 +74,6 @@ public class AccountDAO {
     
         try {
             String sql = "SELECT * FROM account WHERE account_id = ?";
-            
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
     
             preparedStatement.setInt(1, accountID);
