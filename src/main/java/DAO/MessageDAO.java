@@ -19,8 +19,8 @@ public class MessageDAO {
     {
         Connection connection = ConnectionUtil.getConnection();
 
-        String sql = "INSERT INTO message (posted_by, message_text, time_posted_epoch) VALUES (?, ?, ?)";
         try {
+            String sql = "INSERT INTO message (posted_by, message_text, time_posted_epoch) VALUES (?, ?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
             preparedStatement.setInt(1, message.getPosted_by());
@@ -84,6 +84,58 @@ public class MessageDAO {
         }catch(SQLException e){
             System.out.println(e.getMessage());
     
+        }
+        return null;
+    }
+
+    public Message deleteMessageByMessageID(int messageID)
+    {
+        Message messageToBeDeleted = getMessageByMessageID(messageID);
+        Connection connection = ConnectionUtil.getConnection();
+
+        
+        try {
+            if(messageToBeDeleted != null)
+            {
+                String sql = "DELETE FROM message WHERE message_id = ?";
+                PreparedStatement preparedStatement = connection.prepareStatement(sql);
+                preparedStatement.setInt(1, messageID);
+                preparedStatement.executeUpdate(); 
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        return messageToBeDeleted;
+    }
+
+    public Message updateMessageByMessageID(int messageID, Message messageUpdate)
+    {
+        Message messageToBeUpdated = getMessageByMessageID(messageID);
+        Connection connection = ConnectionUtil.getConnection();
+
+        if(messageUpdate.getMessage_text().isBlank() || messageUpdate.getMessage_text().length() > 250)
+        {
+            return null;
+        }
+        
+        if(messageToBeUpdated == null)
+        {
+            return null;
+        }
+
+        try {
+            String sql = "UPDATE message SET message_text = ? WHERE message_id = ?";
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, messageUpdate.getMessage_text());
+            preparedStatement.setInt(2, messageID);
+            preparedStatement.executeUpdate();
+
+            return getMessageByMessageID(messageID);
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
         return null;
     }

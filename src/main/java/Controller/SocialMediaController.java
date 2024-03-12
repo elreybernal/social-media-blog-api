@@ -58,7 +58,6 @@ public class SocialMediaController {
     private void exampleHandler(Context context) {
         context.json("sample text");
         System.out.println("Hello World");
-        ///context.result("sample text");
     }
 
     /*
@@ -190,6 +189,17 @@ public class SocialMediaController {
 
      */
     private void deleteMessageByMessageIDHandler(Context context) {
+          int messageID = Integer.parseInt(context.pathParam("message_id"));
+          Message messageToBeDeleted = messageService.deleteMessageByMessageID(messageID);
+
+          if(messageToBeDeleted == null)
+          {
+               context.status(200);
+          }
+          else
+          {
+               context.json(messageToBeDeleted);
+          }
 
     }
 
@@ -200,7 +210,20 @@ public class SocialMediaController {
 - The update of a message should be successful if and only if the message id already exists and the new message_text is not blank and is not over 255 characters. If the update is successful, the response body should contain the full updated message (including message_id, posted_by, message_text, and time_posted_epoch), and the response status should be 200, which is the default. The message existing on the database should have the updated message_text.
 - If the update of the message is not successful for any reason, the response status should be 400. (Client error)
      */
-    private void updateMessageByMessageIDHandler(Context context) {
+    private void updateMessageByMessageIDHandler(Context context) throws JsonProcessingException {
+          ObjectMapper mapper = new ObjectMapper();
+          Message message = mapper.readValue(context.body(), Message.class);
+          int messageID = Integer.parseInt(context.pathParam("message_id"));
+          Message updatedMessage = messageService.updateMessageByMessageID(messageID, message);
+          
+          if(updatedMessage == null)
+          {
+               context.status(400);
+          }
+          else
+          {
+               context.json(mapper.writeValueAsString(updatedMessage));
+          }
 
     }
 

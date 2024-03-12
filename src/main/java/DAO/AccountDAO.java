@@ -29,9 +29,7 @@ public class AccountDAO {
             preparedStatement.setString(2, account.getPassword());
 
             preparedStatement.executeUpdate();
-            ResultSet pkeyResultSet = preparedStatement.getGeneratedKeys();
 
-            //
             Account registeredUser = getAccountByUsername(account.getUsername());
             return registeredUser;
             //
