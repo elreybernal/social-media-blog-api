@@ -13,8 +13,7 @@ import Model.Message;
 
 public class MessageDAO {
 
-    public Message createMessage(Message message)
-    {
+    public Message createMessage(Message message) {
         Connection connection = ConnectionUtil.getConnection();
 
         try {
@@ -28,8 +27,7 @@ public class MessageDAO {
             preparedStatement.executeUpdate();
             ResultSet rs = preparedStatement.getGeneratedKeys();
 
-            if(rs.next())
-            {
+            if (rs.next()) {
                 int generated_message_id = (int) rs.getLong(1);
                 Message newMessage = getMessageByMessageID(generated_message_id);
                 return newMessage;
@@ -41,7 +39,7 @@ public class MessageDAO {
         return null;
     }
 
-    public List<Message> getAllMessages(){
+    public List<Message> getAllMessages() {
         Connection connection = ConnectionUtil.getConnection();
         List<Message> messages = new ArrayList<>();
 
@@ -50,8 +48,7 @@ public class MessageDAO {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             ResultSet rs = preparedStatement.executeQuery();
 
-            while(rs.next())
-            {
+            while (rs.next()) {
                 Message message = new Message(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getLong(4));
                 messages.add(message);
             }
@@ -59,67 +56,61 @@ public class MessageDAO {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+
         return messages;
     }
 
-    public Message getMessageByMessageID(int messageID)
-    {
+    public Message getMessageByMessageID(int messageID) {
         Connection connection = ConnectionUtil.getConnection();
-    
+
         try {
             String sql = "SELECT * FROM message WHERE message_id = ?";
-            
+
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-    
+
             preparedStatement.setInt(1, messageID);
             ResultSet rs = preparedStatement.executeQuery();
-            while(rs.next()) {
-                Message message = new Message(rs.getInt("message_id"), rs.getInt("posted_by"), rs.getString("message_text"), rs.getLong("time_posted_epoch"));
+            while (rs.next()) {
+                Message message = new Message(rs.getInt("message_id"), rs.getInt("posted_by"),
+                        rs.getString("message_text"), rs.getLong("time_posted_epoch"));
                 return message;
             }
-    
-        }catch(SQLException e){
+
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
-    
+
         }
         return null;
     }
 
-    public Message deleteMessageByMessageID(int messageID)
-    {
+    public Message deleteMessageByMessageID(int messageID) {
         Message messageToBeDeleted = getMessageByMessageID(messageID);
         Connection connection = ConnectionUtil.getConnection();
 
-        
         try {
-            if(messageToBeDeleted != null)
-            {
+            if (messageToBeDeleted != null) {
                 String sql = "DELETE FROM message WHERE message_id = ?";
                 PreparedStatement preparedStatement = connection.prepareStatement(sql);
                 preparedStatement.setInt(1, messageID);
-                preparedStatement.executeUpdate(); 
+                preparedStatement.executeUpdate();
             }
         } catch (SQLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        
+
         return messageToBeDeleted;
     }
 
-    public Message updateMessageByMessageID(int messageID, Message messageUpdate)
-    {
+    public Message updateMessageByMessageID(int messageID, Message messageUpdate) {
         Message messageToBeUpdated = getMessageByMessageID(messageID);
         Connection connection = ConnectionUtil.getConnection();
 
-        if(messageUpdate.getMessage_text().isBlank() || messageUpdate.getMessage_text().length() > 250)
-        {
+        if (messageUpdate.getMessage_text().isBlank() || messageUpdate.getMessage_text().length() > 250) {
             return null;
         }
-        
-        if(messageToBeUpdated == null)
-        {
+
+        if (messageToBeUpdated == null) {
             return null;
         }
 
@@ -138,8 +129,7 @@ public class MessageDAO {
         return null;
     }
 
-    public List<Message> getMessagesByUserID(int userID)
-    {
+    public List<Message> getMessagesByUserID(int userID) {
         Connection connection = ConnectionUtil.getConnection();
         List<Message> messages = new ArrayList<>();
 
@@ -148,8 +138,7 @@ public class MessageDAO {
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setInt(1, userID);
             ResultSet rs = preparedStatement.executeQuery();
-            while(rs.next())
-            {
+            while (rs.next()) {
                 Message message = new Message(rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getLong(4));
                 messages.add(message);
             }
