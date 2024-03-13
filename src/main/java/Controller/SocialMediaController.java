@@ -66,22 +66,22 @@ public class SocialMediaController {
           System.out.println("Hello World");
      }
 
-     
      private void registerHandler(Context context) throws JsonProcessingException {
           ObjectMapper mapper = new ObjectMapper();
           Account account = mapper.readValue(context.body(), Account.class);
-          Account addedAccount = accountService.registerAccount(account);
 
-          if (addedAccount == null) {
-               context.status(400);
-          } else if (addedAccount.getUsername() == "" || addedAccount.getPassword().length() < 4) {
+          if (account.getUsername().isEmpty() || account.getPassword().length() < 4) {
                context.status(400);
           } else {
-               context.json(mapper.writeValueAsString(addedAccount));
+               Account addedAccount = accountService.registerAccount(account);
+               if (addedAccount == null) {
+                    context.status(400);
+               } else {
+                    context.json(mapper.writeValueAsString(addedAccount));
+               }
           }
      }
 
-     
      private void loginHandler(Context context) throws JsonProcessingException {
           ObjectMapper mapper = new ObjectMapper();
           Account account = mapper.readValue(context.body(), Account.class);
@@ -96,28 +96,24 @@ public class SocialMediaController {
           }
      }
 
-     
      private void newMessageHandler(Context context) throws JsonProcessingException {
           ObjectMapper mapper = new ObjectMapper();
           Message message = mapper.readValue(context.body(), Message.class);
           Message newMessage = messageService.createMessage(message);
 
-          if (message.getMessage_text() == "" || message.getMessage_text().length() > 255) {
+          if (message.getMessage_text().isEmpty() || message.getMessage_text().length() > 255) {
                context.status(400);
           } else if (accountService.accountExists(message.getPosted_by()) == null) {
                context.status(400);
           } else {
                context.json(mapper.writeValueAsString(newMessage));
           }
-          // else
      }
 
-     
      private void getAllMessageHandler(Context context) {
           context.json(messageService.getAllMessages());
      }
 
-     
      private void getMessageByMessageIDHandler(Context context) {
           int messageID = Integer.parseInt(context.pathParam("message_id"));
 
@@ -129,7 +125,6 @@ public class SocialMediaController {
           }
      }
 
-    
      private void deleteMessageByMessageIDHandler(Context context) {
           int messageID = Integer.parseInt(context.pathParam("message_id"));
           Message messageToBeDeleted = messageService.deleteMessageByMessageID(messageID);
@@ -142,7 +137,6 @@ public class SocialMediaController {
 
      }
 
-     
      private void updateMessageByMessageIDHandler(Context context) throws JsonProcessingException {
           ObjectMapper mapper = new ObjectMapper();
           Message message = mapper.readValue(context.body(), Message.class);
@@ -157,7 +151,6 @@ public class SocialMediaController {
 
      }
 
-     
      private void getAllMessageByUserIDHandler(Context context) {
           int userID = Integer.parseInt(context.pathParam("account_id"));
           context.json(messageService.getAllMessagesByUserID(userID));
